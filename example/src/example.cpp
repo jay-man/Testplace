@@ -129,7 +129,7 @@ int32_t main(int32_t argc, char **argv) {
                     sharedMemory->lock();
                     if (VERBOSE) {
                         cvShowImage(sharedMemory->name().c_str(), image);
-						auto onFrame{[&detectlane](cluon::data::Envelope &&envelope)
+						auto onFrame{[&detectlane, &image](cluon::data::Envelope &&envelope)
       						{
 								//Don't know what this do
 								//auto distanceReading = cluon::extractMessage<opendlv::proxy::DistanceReading>(std::move(envelope));

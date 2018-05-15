@@ -57,7 +57,7 @@ class DetectLane {
   ~DetectLane() = default;
  public:
   void setUp();
-  void UpdateVisualMemory();
+  void UpdateVisualMemory(const &);
 
   /*void UpdateVisualLines();
   void setUp();
