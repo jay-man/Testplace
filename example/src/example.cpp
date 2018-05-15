@@ -131,10 +131,14 @@ int32_t main(int32_t argc, char **argv) {
                         cvShowImage(sharedMemory->name().c_str(), image);
 						auto onFrame{[&detectlane](cluon::data::Envelope &&envelope)
       						{
+								//Don't know what this do
         						//auto distanceReading = cluon::extractMessage<opendlv::proxy::DistanceReading>(std::move(envelope));
+								// setUp all required parameters for the lanedetection -> hardcoded->change later
 								detectlane.setUp();
+								//Pass the current picture to start the processing ing detect_lane.cpp
                         		detectlane.UpdateVisualMemory(image);
-							}
+							}}
+					}
                     sharedMemory->unlock();
                     cv::waitKey(1);
                 }
