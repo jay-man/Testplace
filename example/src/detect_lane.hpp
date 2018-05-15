@@ -35,15 +35,15 @@
 #include "opendlv-standard-message-set.hpp"
 
 
-class DetectLane
-: public odcore::base::module::DataTriggeredConferenceClientModule {
+/*class DetectLane
+: public odxxcore::base::module::DataTriggeredConferenceClientModule {
  public:
-  //DetectLane(int32_t const &, char **);
-  DetectLane();
+  DetectLane(int32_t const &, char **);
   DetectLane(DetectLane const &) = delete;
   DetectLane &operator=(DetectLane const &) = delete;
-  //virtual ~DetectLane();
-  virtual void nextContainer(odcore::data::Container &);
+  virtual ~DetectLane();
+  virtual void nextCxontainer(odcore::data::Container &);
+*/
 
 class DetectLane {
  private:
@@ -55,15 +55,16 @@ class DetectLane {
  public:
   DetectLane() noexcept;
   ~DetectLane() = default;
-
- private:
-  void UpdateVisualMemory();
-  //void UpdateVisualLines();
+ public:
   void setUp();
-  //void tearDown();
-
-  //bool ExtractSharedImage(odcore::data::image::SharedImage *);
   void UpdateVisualMemory();
+
+  /*void UpdateVisualLines();
+  void setUp();
+  void tearDown();
+  
+
+  bool ExtractSharedImage(odcore::data::image::SharedImage *);
   void UpdateVisualLines();
   std::vector<cv::Vec2f> GetGrouping(std::vector<cv::Vec2f>, double);
   std::vector<std::pair<cv::Vec2f, cv::Vec2f>> GetParametricRepresentation(std::vector<cv::Vec2f>);
@@ -73,36 +74,37 @@ class DetectLane {
   Eigen::MatrixXd ReadMatrix(std::string const, uint8_t const, uint8_t const) const;
   Eigen::Vector3d TransformPointToGlobalFrame(Eigen::Vector3d) const;
   void DrawWindows();
+  */
 
-  //bool m_initialized;
+  bool m_initialized;
   cv::Mat m_currentImg;
   uint16_t m_blurKernelSize; 
   cv::Mat m_cannyImg;
   cv::Mat m_adapThreshImg;
-  std::deque<std::pair<odcore::data::TimeStamp, cv::Mat>> m_visualMemory;
+  /*std::deque<std::pair<odcore::data::TimeStamp, cv::Mat>> m_visualMemory;*/
   uint8_t m_adapThreshKernelSize;
   uint8_t m_adapThreshConst;
   uint16_t m_cannyThreshold;
   uint16_t m_houghThreshold;
-  std::vector<cv::Vec2f> m_linesRaw;
-  std::vector<cv::Vec2f> m_linesProcessed;
-  std::vector<uint16_t> m_laneLineIds;
-  std::vector<uint16_t> m_currentLaneLineIds;
-  std::vector<cv::Vec2f> m_xScreenP;
-  std::vector<cv::Vec2f> m_yScreenP;
-  std::vector<cv::Vec2f> m_xWorldP;
-  std::vector<cv::Vec2f> m_yWorldP;
+  //std::vector<cv::Vec2f> m_linesRaw;
+  //std::vector<cv::Vec2f> m_linesProcessed;
+  //std::vector<uint16_t> m_laneLineIds;
+  //std::vector<uint16_t> m_currentLaneLineIds;
+  //std::vector<cv::Vec2f> m_xScreenP;
+  //std::vector<cv::Vec2f> m_yScreenP;
+  //std::vector<cv::Vec2f> m_xWorldP;
+  //std::vector<cv::Vec2f> m_yWorldP;
   float m_lineDiff;
   float m_OneLineDiff;
   float m_HorisontalLimit;
   double m_memThreshold;
   double m_upperLaneLimit;
   double m_lowerLaneLimit;
-  int16_t m_screenSize[2];
+  //int16_t m_screenSize[2];
   int16_t m_roi[4];
-  odcore::base::Mutex m_mtx;
+  //odcore::base::Mutex m_mtx;
   bool m_debug;
-  std::string m_cameraName; 
+  //std::string m_cameraName; 
   Eigen::Matrix3d m_transformationMatrix;
 
 };

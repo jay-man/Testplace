@@ -20,8 +20,8 @@
 
 #include "detect_lane.hpp"
 
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/ini_parser.hpp>
+//#include <boost/property_tree/ptree.hpp>
+//#include <boost/property_tree/ini_parser.hpp>
 
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
@@ -33,6 +33,7 @@
 #include <string>
 #include <thread>
 
+/*
 DetectLane::DetectLane() noexcept:
      image()
     , m_blurKernelSize()
@@ -66,42 +67,7 @@ DetectLane::DetectLane() noexcept:
 
 {
 }
-
-void DetectLane::setUp()
-{
-	// JL: odcore from OpenDaVinci -> concurrency
-  boost::property_tree::ptree pt;
-  boost::property_tree::ini_parser::read_ini("cv_config.ini", pt);
-  m_adapThreshKernelSize = 
-      pt.getValue<uint16_t>("logic-perception-detectlane.adapThreshKernelSize");
-  m_adapThreshConst = 
-      pt.getValue<uint16_t>("logic-perception-detectlane.adapThreshConst");
-  m_cannyThreshold = 
-      pt.getValue<uint16_t>("logic-perception-detectlane.cannyThreshold");
-  m_houghThreshold = 
-      pt.getValue<uint16_t>("logic-perception-detectlane.houghThreshold");
-  m_lineDiff = pt.getValue<float>("logic-perception-detectlane.lineDiff");
-  m_OneLineDiff = pt.getValue<float>("logic-perception-detectlane.OneLineDiff");
-  m_HorisontalLimit = 
-      pt.getValue<float>("logic-perception-detectlane.HorisontalLimit");
-  m_blurKernelSize = pt.getValue<uint16_t>("logic-perception-detectlane.blurKernelSize");
-  m_memThreshold = pt.getValue<double>("logic-perception-detectlane.memThreshold");
-  m_upperLaneLimit = 
-      pt.getValue<uint16_t>("logic-perception-detectlane.upperLaneLimit");
-  m_lowerLaneLimit = 
-      pt.getValue<uint16_t>("logic-perception-detectlane.lowerLaneLimit");
-  m_screenSize[0] = pt.getValue<uint16_t>("logic-perception-detectlane.screenWidth");
-  m_screenSize[1] = pt.getValue<uint16_t>("logic-perception-detectlane.screenHeight");
-  m_roi[0] = pt.getValue<uint16_t>("logic-perception-detectlane.roiX");
-  m_roi[1] = pt.getValue<uint16_t>("logic-perception-detectlane.roiY");
-  m_roi[2] = pt.getValue<uint16_t>("logic-perception-detectlane.roiWidth");
-  m_roi[3] = pt.getValue<uint16_t>("logic-perception-detectlane.roiHeight");
-  m_debug = (pt.getValue<int32_t>("logic-perception-detectlane.debug") == 1);
-  m_cameraName = pt.getValue<std::string>("logic-perception-detectlane.camera");
-  std::string const projectionFilename = m_cameraName + "-pixel2world-matrix.csv";
-  m_transformationMatrix = ReadMatrix(projectionFilename,3,3);
-  m_initialized = true;
-}
+*/
 
 int32_t main(int32_t argc, char **argv) {
     int32_t retCode{0};
@@ -163,7 +129,8 @@ int32_t main(int32_t argc, char **argv) {
                     sharedMemory->lock();
                     if (VERBOSE) {
                         cvShowImage(sharedMemory->name().c_str(), image);
-                        detectlane UpdateVisualMemory();
+						detectlane.setUp();
+                        detectlane.UpdateVisualMemory();
                     }
                     sharedMemory->unlock();
                     cv::waitKey(1);
@@ -203,4 +170,4 @@ void DetectLane::UpdateVisualMemory() {
     memoryIsTooOld = (now - m_visualMemory.front().first).toMicroseconds() > MEMCAP_IN_MICROSECONDS;
   }
 }
-*/u
+*/

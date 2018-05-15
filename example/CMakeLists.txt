@@ -70,8 +70,39 @@ add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/opendlv-standard-message-set.cpp
     DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/src/${OPENDLV_STANDARD_MESSAGE_SET} ${CMAKE_BINARY_DIR}/cluon-msc)
 # Add current build directory as include directory as it contains generated files.
 include_directories(SYSTEM ${CMAKE_BINARY_DIR})
+include_directories(SYSTEM ${EIGEN3_INCLUDE_DIR})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
+
+################################################################################
+# Eigen
+# Attemp 1: Source "https://github.com/chalmers-revere/opendlv.io/blob/feature.beaglebone/opencv3/CMakeLists.txt"
+find_package(Eigen3 REQUIRED)
+#include_directories(${EIGEN3_INCLUDE_DIR})
+
+
+# Attemp 2: Soruce "https://stackoverflow.com/questions/12249140/find-package-eigen3-for-cmake"
+#INCLUDE_DIRECTORIES(${EIGEN3_INCLUDE_DIR})
+# OR
+#SET( EIGEN3_INCLUDE_DIR "$ENV{EIGEN3_INCLUDE_DIR2}" )
+#IF( NOT EIGEN3_INCLUDE_DIR )
+#    MESSAGE( FATAL_ERROR "Please point the environment variable EIGEN3_INCLUDE_DIR to the include directory of your Eigen3 installation.")
+#ENDIF()
+#INCLUDE_DIRECTORIES ( "${EIGEN3_INCLUDE_DIR}" )
+
+# Different variations
+#set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR})
+#list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}")
+#find_package(EIGEN3 REQUIRED)
+
+#find_package(Eigen3 REQUIRED)
+
+#set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR})
+#find_package(Eigen3 REQUIRED)
+#include_directories(${EIGEN3_INCLUDE_DIR})
+
+
 #include_directories(SYSTEM ${EIGEN3_INCLUDE_DIR})
+#include_directories(${Eigen3_INCLUDE_DIRS})
 
 ################################################################################
 # Gather all object code first to avoid double compilation.
@@ -90,41 +121,7 @@ find_package(OpenCV REQUIRED core highgui)
 include_directories(SYSTEM ${OpenCV_INCLUDE_DIRS})
 set(LIBRARIES ${LIBRARIES} ${OpenCV_LIBS})
 
-set(LIBRARIES Threads::Threads ${OpenCV_LIBS} ${Eigen3_LIBS})
-
-################################################################################
-# Eigen
-# Attemp 1: Source "https://github.com/chalmers-revere/opendlv.io/blob/feature.beaglebone/opencv3/CMakeLists.txt"
-#find_package(Eigen3 3.3 REQUIRED)
-#include_directories(${EIGEN3_INCLUDE_DIR})
-
-
-# Attemp 2: Soruce "https://stackoverflow.com/questions/12249140/find-package-eigen3-for-cmake"
-#INCLUDE_DIRECTORIES($ENV{EIGEN3_INCLUDE_DIR})
-# OR
-SET( EIGEN3_INCLUDE_DIR $ENV{EIGEN3_INCLUDE_DIR} )
-IF( NOT EIGEN3_INCLUDE_DIR )
-    MESSAGE( FATAL_ERROR "Please point the environment variable EIGEN3_INCLUDE_DIR to the include directory of your Eigen3 installation.")
-ENDIF()
-INCLUDE_DIRECTORIES ( ${EIGEN3_INCLUDE_DIR} )
-
-# Different variations
-#set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR})
-#list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}")
-#find_package(EIGEN3 REQUIRED)
-
-#find_package(Eigen3 REQUIRED)
-
-#set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR})
-#find_package(Eigen3 REQUIRED)
-#include_directories(${EIGEN3_INCLUDE_DIR})
-
-
-#include_directories(SYSTEM ${EIGEN3_INCLUDE_DIR})
-#include_directories(${Eigen3_INCLUDE_DIRS})
-
-
-################################################################################
+set(LIBRARIES Threads::Threads ${OpenCV_LIBS})
 
 ################################################################################
 # Create executable.
@@ -134,3 +131,4 @@ target_link_libraries(${PROJECT_NAME} ${LIBRARIES})
 ################################################################################
 # Install executable.
 install(TARGETS ${PROJECT_NAME} DESTINATION bin COMPONENT ${PROJECT_NAME})
+
