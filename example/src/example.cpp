@@ -18,7 +18,7 @@
 #include "cluon-complete.hpp"
 #include "opendlv-standard-message-set.hpp"
 
-#include "detect_lane.hpp"
+#include "detectlane.hpp"
 
 //#include <boost/property_tree/ptree.hpp>
 //#include <boost/property_tree/ini_parser.hpp>
@@ -33,41 +33,6 @@
 #include <string>
 #include <thread>
 
-/*
-DetectLane::DetectLane() noexcept:
-     image()
-    , m_blurKernelSize()
-    , m_cannyImg()
-    , m_adapThreshImg()
-    , m_visualMemory()
-    , m_adapThreshKernelSize()
-    , m_adapThreshConst()
-    , m_cannyThreshold()
-    , m_houghThreshold()
-    , m_linesRaw()
-    , m_linesProcessed()
-    , m_laneLineIds()
-    , m_currentLaneLineIds()
-    , m_xScreenP()
-    , m_yScreenP()
-    , m_xWorldP()
-    , m_yWorldP()
-    , m_lineDiff()
-    , m_OneLineDiff()
-    , m_HorisontalLimit()
-    , m_memThreshold()
-    , m_upperLaneLimit()
-    , m_lowerLaneLimit()
-    , m_screenSize()
-    , m_roi()
-    , m_mtx()
-    , m_debug()
-    , m_cameraName()
-    , m_transformationMatrix()
-
-{
-}
-*/
 
 int32_t main(int32_t argc, char **argv) {
     int32_t retCode{0};
@@ -118,10 +83,14 @@ int32_t main(int32_t argc, char **argv) {
                 size.height = HEIGHT;
 
                 IplImage *image = cvCreateImageHeader(size, IPL_DEPTH_8U, BPP/8);
+                // convert IplImage to Cv:Mat cvarrToMat
+                cv::Mat cv_image = cv::cvarrToMat(image);
                 sharedMemory->lock();
                 image->imageData = sharedMemory->data();
                 image->imageDataOrigin = image->imageData;
                 sharedMemory->unlock();
+
+				//bool m_initialized(false);
 
                 while (od4.isRunning()) {
                     // The shared memory uses a pthread broadcast to notify us; just sleep to get awaken up.
@@ -129,15 +98,17 @@ int32_t main(int32_t argc, char **argv) {
                     sharedMemory->lock();
                     if (VERBOSE) {
                         cvShowImage(sharedMemory->name().c_str(), image);
-						auto onFrame{[&detectlane, &image](cluon::data::Envelope &&envelope)
-      						{
-								//Don't know what this do
-								//auto distanceReading = cluon::extractMessage<opendlv::proxy::DistanceReading>(std::move(envelope));
-								// setUp all required parameters for the lanedetection -> hardcoded->change later
-								detectlane.setUp();
-								//Pass the current picture to start the processing in detect_lane.cpp
-								detectlane.UpdateVisualMemory(image);
-							}}
+
+						detectlane.Datatrigger(cv_image);
+						/*
+						auto onFrame{[&detectlane, &image, &m_initialized](cluon::SharedMemory)
+      					//	{
+						//Don't know what this do
+						auto distanceReading = cluon::extractMessage<opendlv::proxy::DistanceReading>(std::move(envelope));
+						Pass the current picture to start the processing in detect_lane.cpp
+						detectlane.UpdateVisualMemory(image);
+						//}};
+						*/
 					}
                     sharedMemory->unlock();
                     cv::waitKey(1);
