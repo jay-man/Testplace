@@ -84,11 +84,11 @@ int32_t main(int32_t argc, char **argv) {
 
                 IplImage *image = cvCreateImageHeader(size, IPL_DEPTH_8U, BPP/8);
                 // convert IplImage to Cv:Mat cvarrToMat
-                cv::Mat cv_image = cv::cvarrToMat(image);
                 sharedMemory->lock();
                 image->imageData = sharedMemory->data();
                 image->imageDataOrigin = image->imageData;
                 sharedMemory->unlock();
+                cv::Mat cv_image;
 
 				//bool m_initialized(false);
 
@@ -98,8 +98,8 @@ int32_t main(int32_t argc, char **argv) {
                     sharedMemory->lock();
                     if (VERBOSE) {
                         cvShowImage(sharedMemory->name().c_str(), image);
-
-						detectlane.Datatrigger(cv_image);
+                        cv_image = cv::cvarrToMat(image);
+						
 						/*
 						auto onFrame{[&detectlane, &image, &m_initialized](cluon::SharedMemory)
       					//	{
@@ -112,6 +112,8 @@ int32_t main(int32_t argc, char **argv) {
 					}
                     sharedMemory->unlock();
                     cv::waitKey(1);
+                    
+                    detectlane.Datatrigger(cv_image);
                 }
                 cvReleaseImageHeader(&image);
             }

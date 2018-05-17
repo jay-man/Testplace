@@ -50,14 +50,14 @@ RUN echo http://dl-4.alpinelinux.org/alpine/edge/main > /etc/apk/repositories &&
         libcanberra-gtk3
 
 #Boost
-RUN cd /home && wget http://downloads.sourceforge.net/project/boost/boost/1.60.0/boost_1_60_0.tar.gz \
-  && tar xfz boost_1_60_0.tar.gz \
-  && rm boost_1_60_0.tar.gz \
-  && cd boost_1_60_0 \
-  && ./bootstrap.sh --prefix=/usr/local --with-libraries=program_options \
-  && ./b2 install \
-  && cd /home \
-  && rm -rf boost_1_60_0
+#RUN cd /home && wget http://downloads.sourceforge.net/project/boost/boost/1.60.0/boost_1_60_0.tar.gz \
+#  && tar xfz boost_1_60_0.tar.gz \
+#  && rm boost_1_60_0.tar.gz \
+#  && cd boost_1_60_0 \
+#  && ./bootstrap.sh --prefix=/usr/local --with-libraries=program_options \
+#  && ./b2 install \
+#  && cd /home \
+#  && rm -rf boost_1_60_0
 
 WORKDIR /usr/bin
 COPY --from=builder /tmp/bin/example .
