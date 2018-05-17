@@ -61,6 +61,7 @@ class DetectLane {
   void setUp();
   void UpdateVisualMemory();
   void UpdateVisualLines();
+  std::vector<cv::Vec2f> GetGrouping(std::vector<cv::Vec2f>, double);
 
   /*void UpdateVisualLines();
   void setUp();

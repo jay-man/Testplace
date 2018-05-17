@@ -99,14 +99,13 @@ void DetectLane::UpdateVisualMemory() {
   
   m_visualMemory.push_back(std::make_pair(now, visualImpression));
   // Delete old mem, comparison in microseconds in the timestamps
-	/*
   int64_t const MEMCAP_IN_MICROSECONDS = static_cast<int64_t>(m_memThreshold*1000000.0);
-  bool memoryIsTooOld = (now - m_visualMemory.front().first).toMicroseconds() > MEMCAP_IN_MICROSECONDS;
+  bool memoryIsTooOld = deltaInMicroseconds(now, m_visualMemory.front().first) > MEMCAP_IN_MICROSECONDS;
   while (!m_visualMemory.empty() && memoryIsTooOld) {
     m_visualMemory.pop_front();
-    memoryIsTooOld = (now - m_visualMemory.front().first).toMicroseconds() > MEMCAP_IN_MICROSECONDS;
+  //  memoryIsTooOld = (now - m_visualMemory.front().first).toMicroseconds() > MEMCAP_IN_MICROSECONDS;
 	  
-  } */
+  } 
 }
 
 void DetectLane::UpdateVisualLines()
