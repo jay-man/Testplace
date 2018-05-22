@@ -27,10 +27,13 @@
 #include <memory>
 #include <utility>
 #include <vector>
+#include <cmath>
+#include <mutex>
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
+
 
 #include "opendlv-standard-message-set.hpp"
 #include "cluon-complete.hpp" 
@@ -62,22 +65,18 @@ class DetectLane {
   void UpdateVisualMemory();
   void UpdateVisualLines();
   std::vector<cv::Vec2f> GetGrouping(std::vector<cv::Vec2f>, double);
+  std::vector<std::pair<cv::Vec2f, cv::Vec2f>> GetParametricRepresentation(std::vector<cv::Vec2f>);
+  void UpdatePointsOnLines(std::vector<std::pair<cv::Vec2f, cv::Vec2f>>);
+  std::vector<uint16_t> GetLanes() const;
+  std::vector<uint16_t> GetCurrentLane() const;
+  Eigen::Vector3d TransformPointToGlobalFrame(Eigen::Vector3d) const;
+  Eigen::MatrixXd ReadMatrix(std::string const, uint8_t const, uint8_t const) const;
+  void DrawWindows();
 
   /*void UpdateVisualLines();
   void setUp();
   void tearDown();
   
-
-  bool ExtractSharedImage(odcore::data::image::SharedImage *);
-  void UpdateVisualLines();
-  std::vector<cv::Vec2f> GetGrouping(std::vector<cv::Vec2f>, double);
-  std::vector<std::pair<cv::Vec2f, cv::Vec2f>> GetParametricRepresentation(std::vector<cv::Vec2f>);
-  void UpdatePointsOnLines(std::vector<std::pair<cv::Vec2f, cv::Vec2f>>);
-  std::vector<uint16_t> GetLanes() const;
-  std::vector<uint16_t> GetCurrentLane() const;
-  Eigen::MatrixXd ReadMatrix(std::string const, uint8_t const, uint8_t const) const;
-  Eigen::Vector3d TransformPointToGlobalFrame(Eigen::Vector3d) const;
-  void DrawWindows();
   */
 
   //bool m_initialized;
@@ -86,7 +85,6 @@ class DetectLane {
   uint16_t m_blurKernelSize; 
   cv::Mat m_cannyImg;
   cv::Mat m_adapThreshImg;
-	//odcore -> TimeStamp libcluon
   std::deque<std::pair<cluon::data::TimeStamp, cv::Mat>> m_visualMemory;
   uint8_t m_adapThreshKernelSize;
   uint8_t m_adapThreshConst;
@@ -94,24 +92,24 @@ class DetectLane {
   uint16_t m_houghThreshold;
   std::vector<cv::Vec2f> m_linesRaw;
   std::vector<cv::Vec2f> m_linesProcessed;
-  //std::vector<uint16_t> m_laneLineIds;
-  //std::vector<uint16_t> m_currentLaneLineIds;
-  //std::vector<cv::Vec2f> m_xScreenP;
-  //std::vector<cv::Vec2f> m_yScreenP;
-  //std::vector<cv::Vec2f> m_xWorldP;
-  //std::vector<cv::Vec2f> m_yWorldP;
+  std::vector<uint16_t> m_laneLineIds;
+  std::vector<uint16_t> m_currentLaneLineIds;
+  std::vector<cv::Vec2f> m_xScreenP;
+  std::vector<cv::Vec2f> m_yScreenP;
+  std::vector<cv::Vec2f> m_xWorldP;
+  std::vector<cv::Vec2f> m_yWorldP;
   float m_lineDiff;
   float m_OneLineDiff;
   float m_HorisontalLimit;
   double m_memThreshold;
-  //double m_upperLaneLimit;
-  //double m_lowerLaneLimit;
-  //int16_t m_screenSize[2];
+  double m_upperLaneLimit;
+  double m_lowerLaneLimit;
+  int16_t m_screenSize[2];
   int16_t m_roi[4];
-  //odcore::base::Mutex m_mtx;
-  //bool m_debug;
+  std::mutex m_mtx;
+  bool m_debug;
   //std::string m_cameraName; 
-  //Eigen::Matrix3d m_transformationMatrix;
+  Eigen::Matrix3d m_transformationMatrix;
 
 };
 
