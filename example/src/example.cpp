@@ -83,14 +83,11 @@ int32_t main(int32_t argc, char **argv) {
                 size.height = HEIGHT;
 
                 IplImage *image = cvCreateImageHeader(size, IPL_DEPTH_8U, BPP/8);
-                // convert IplImage to Cv:Mat cvarrToMat
                 sharedMemory->lock();
                 image->imageData = sharedMemory->data();
                 image->imageDataOrigin = image->imageData;
                 sharedMemory->unlock();
                 cv::Mat cv_image,cv_image_colorflip;
-
-				//bool m_initialized(false);
 
                 while (od4.isRunning()) {
                     // The shared memory uses a pthread broadcast to notify us; just sleep to get awaken up.
@@ -100,20 +97,11 @@ int32_t main(int32_t argc, char **argv) {
                         cvShowImage(sharedMemory->name().c_str(), image);
                         cv_image = cv::cvarrToMat(image);
 						
-						/*
-						auto onFrame{[&detectlane, &image, &m_initialized](cluon::SharedMemory)
-      					//	{
-						//Don't know what this do
-						auto distanceReading = cluon::extractMessage<opendlv::proxy::DistanceReading>(std::move(envelope));
-						Pass the current picture to start the processing in detect_lane.cpp
-						detectlane.UpdateVisualMemory(image);
-						//}};
-						*/
 					}
                     sharedMemory->unlock();
                     cv::waitKey(1);
                     
-                    cvtColor(cv_image,cv_image_colorflip,cv::COLOR_RGB2BGR)
+                    cvtColor(cv_image,cv_image_colorflip,cv::COLOR_RGB2BGR);
                     detectlane.Datatrigger(cv_image_colorflip);
                 }
                 cvReleaseImageHeader(&image);

@@ -39,16 +39,6 @@
 #include "cluon-complete.hpp" 
 
 
-/*class DetectLane
-: public odxxcore::base::module::DataTriggeredConferenceClientModule {
- public:
-  DetectLane(int32_t const &, char **);
-  DetectLane(DetectLane const &) = delete;
-  DetectLane &operator=(DetectLane const &) = delete;
-  virtual ~DetectLane();
-  virtual void nextCxontainer(odcore::data::Container &);
-*/
-
 class DetectLane {
  private:
   DetectLane(DetectLane const &) = delete;
@@ -72,12 +62,6 @@ class DetectLane {
   Eigen::Vector3d TransformPointToGlobalFrame(Eigen::Vector3d) const;
   Eigen::MatrixXd ReadMatrix(std::string const, uint8_t const, uint8_t const) const;
   void DrawWindows();
-
-  /*void UpdateVisualLines();
-  void setUp();
-  void tearDown();
-  
-  */
 
   //bool m_initialized;
   cv::Mat cv_image;
@@ -108,7 +92,6 @@ class DetectLane {
   int16_t m_roi[4];
   std::mutex m_mtx;
   bool m_debug;
-  //std::string m_cameraName; 
   Eigen::Matrix3d m_transformationMatrix;
 
 };

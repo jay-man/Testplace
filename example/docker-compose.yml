@@ -2,7 +2,7 @@ version: '2'
 
 services:
     producer:
-        image: chalmersrevere/opendlv-device-camera-rpicamv2-armhf:v0.0.1
+        image: producer
         network_mode: "host"
         volumes:
           - "/dev/shm:/dev/shm"
@@ -11,16 +11,7 @@ services:
           memlock:
             soft: 4000000
             hard: 4000000
-        command: "docker run \
-           --rm \
-           -ti \
-           --init \
-           --device /dev/video0 \
-           -v /tmp/.X11-unix:/tmp/.X11-unix \
-           -e DISPLAY=$DISPLAY \
-           -v /dev/shm:/dev/shm \
-           --ulimit memlock=2764800:2764800 \
-           producer:latest \
+        command: "
                --camera=/dev/video0 \
                --cid=111 \
                --name=camera0 \
@@ -30,18 +21,27 @@ services:
                --freq=5"
     
     consumer:
-        image: chalmersrevere/opendlv-device-camera-rpicamv2-example-armhf:v0.0.1
+        image: consumer
         depends_on:
-          - device-camera-rpicamv2
+          - producer
         restart: always
         network_mode: "host"
         working_dir: /opt/
         volumes:
           - "/dev/shm:/dev/shm"
           - .:/opt/
+          - /tmp/.X11-unix:/tmp/.X11-unix
+        environment: 
+          - DISPLAY=$DISPLAY
         privileged: true
         ulimits:
           memlock:
             soft: 4000000
             hard: 4000000
-        command: "/usr/bin/example --cid=111 --name=cam0 --traincnn=1 --width=128
+        command: "
+               --cid=111 \
+               --name=camera0 \
+               --width=1280 \
+               --height=720 \
+               --bpp=24 \
+               --verbose"

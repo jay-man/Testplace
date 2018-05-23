@@ -8,9 +8,9 @@ DetectLane::DetectLane() noexcept :
   , m_adapThreshImg()
   , m_visualMemory()
   , m_adapThreshKernelSize(5)
-  , m_adapThreshConst(25)
-  , m_cannyThreshold(180) //220
-  , m_houghThreshold(80) //#80,100
+  , m_adapThreshConst(3)
+  , m_cannyThreshold(30) //220
+  , m_houghThreshold(100) //#80,100
   , m_linesRaw()
   , m_linesProcessed()
   , m_laneLineIds()
@@ -23,10 +23,9 @@ DetectLane::DetectLane() noexcept :
   , m_OneLineDiff(5.0f) //#how much a line can differ between the two points
   , m_HorisontalLimit(12.0f) // meters on each side we should consider
   , m_memThreshold(0.5) //seconds
-  , m_upperLaneLimit(250)
-  , m_lowerLaneLimit(450)
-//m_screenWidth = 1280
-//m_screenHeight = 720
+  , m_upperLaneLimit(200)
+  , m_lowerLaneLimit(500)
+  , m_screenSize{}
 // m_camera = name
   , m_roi{}
   , m_mtx()
@@ -34,11 +33,15 @@ DetectLane::DetectLane() noexcept :
   , m_transformationMatrix()
 {
   //m_roi={30,150,1000,50}; 
-  m_roi[0]=30; //#205 Pixels away from the upper left corner in X
-  m_roi[1]=150; //#200 Pixels away from the upper part of picture in Y
-  m_roi[2]=1000; //#110 Done Pixel width of the captured box in X
-  m_roi[3]=50; //#300 Pixel height of the captured box in Y
-  m_transformationMatrix = ReadMatrix("logic-perception-detectlane.camera-pixel2world-matrix.csv",3,3);
+  m_roi[0]=200; //#205 Pixels away from the upper left corner in X
+  m_roi[1]=170; //#200 Pixels away from the upper part of picture in Y
+  m_roi[2]=800; //#110 Done Pixel width of the captured box in X
+  m_roi[3]=400; //#300 Pixel height of the captured box in Y
+
+  m_screenSize[0]=1280;
+  m_screenSize[1]=720;
+	  
+  m_transformationMatrix = ReadMatrix("logic-perception-detectlane.camera-pixel2world-matrix.csv",3,3);	
 }
 
 
