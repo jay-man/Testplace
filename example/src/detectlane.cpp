@@ -3,14 +3,14 @@
 DetectLane::DetectLane() noexcept :
   cv_image()
   , m_currentImg()
-  , m_blurKernelSize(3)
+  , m_blurKernelSize() // 3
   , m_cannyImg()
   , m_adapThreshImg()
   , m_visualMemory()
-  , m_adapThreshKernelSize(5)
-  , m_adapThreshConst(3)
-  , m_cannyThreshold(30) //220
-  , m_houghThreshold(100) //#80,100
+  , m_adapThreshKernelSize() //5
+  , m_adapThreshConst() //3
+  , m_cannyThreshold() //current: 30, 220
+  , m_houghThreshold() //#80,100
   , m_linesRaw()
   , m_linesProcessed()
   , m_laneLineIds()
@@ -19,12 +19,12 @@ DetectLane::DetectLane() noexcept :
   , m_yScreenP()
   , m_xWorldP()
   , m_yWorldP()
-  , m_lineDiff(2.1f) //1.6
-  , m_OneLineDiff(5.0f) //#how much a line can differ between the two points
-  , m_HorisontalLimit(12.0f) // meters on each side we should consider
-  , m_memThreshold(0.5) //seconds
-  , m_upperLaneLimit(200)
-  , m_lowerLaneLimit(500)
+  , m_lineDiff() //current 2.1f, 1.6
+  , m_OneLineDiff() //current 5.0f how much a line can differ between the two points
+  , m_HorisontalLimit() // current 12.0f meters on each side we should consider
+  , m_memThreshold() //current 0.5 seconds
+  , m_upperLaneLimit() //current 200
+  , m_lowerLaneLimit() //current 500
   , m_screenSize{}
 // m_camera = name
   , m_roi{}
@@ -33,13 +33,13 @@ DetectLane::DetectLane() noexcept :
   , m_transformationMatrix()
 {
   //m_roi={30,150,1000,50}; 
-  m_roi[0]=200; //#205 Pixels away from the upper left corner in X
-  m_roi[1]=170; //#200 Pixels away from the upper part of picture in Y
-  m_roi[2]=800; //#110 Done Pixel width of the captured box in X
-  m_roi[3]=400; //#300 Pixel height of the captured box in Y
+  //m_roi[0]=200; //#205 Pixels away from the upper left corner in X
+  //m_roi[1]=170; //#200 Pixels away from the upper part of picture in Y
+  //m_roi[2]=800; //#110 Done Pixel width of the captured box in X
+  //m_roi[3]=400; //#300 Pixel height of the captured box in Y
 
-  m_screenSize[0]=1280;
-  m_screenSize[1]=720;
+  //m_screenSize[0]=1280;
+  //m_screenSize[1]=720;
 	  
   m_transformationMatrix = ReadMatrix("logic-perception-detectlane.camera-pixel2world-matrix.csv",3,3);	
 }
@@ -50,7 +50,29 @@ DetectLane::~DetectLane()
   cv_image.release();
 }
 
-void DetectLane::Datatrigger(cv::Mat image) {
+void DetectLane::Datatrigger(cv::Mat image, uint32_t width, uint32_t height, uint16_t blurKernelSize, uint8_t adapThreshKernelSize,
+							 uint8_t adapThreshConst, uint16_t cannyThreshold, uint16_t houghThreshold, float lineDiff, float OneLineDiff,
+							 float HorisontalLimit, double memThreshold, double upperLaneLimit, double lowerLaneLimit, uint16_t roiX,
+							 uint16_t roiY, uint16_t roiWidth, uint16_t roiHeight) {
+
+  m_screenSize[0]=width;
+  m_screenSize[1]=height;
+  m_blurKernelSize=blurKernelSize;
+  m_adapThreshKernelSize=adapThreshKernelSize;
+  m_adapThreshConst=adapThreshConst;
+  m_cannyThreshold=cannyThreshold;
+  m_houghThreshold=houghThreshold;
+  m_lineDiff=lineDiff;
+  m_OneLineDiff=OneLineDiff;
+  m_HorisontalLimit=HorisontalLimit;
+  m_memThreshold=memThreshold;
+  m_upperLaneLimit=upperLaneLimit;
+  m_lowerLaneLimit=lowerLaneLimit;
+  m_roi[0]=roiX;
+  m_roi[1]=roiY;
+  m_roi[2]=roiWidth;
+  m_roi[3]=roiHeight;
+	
   m_currentImg = image.clone();
   UpdateVisualMemory();
   UpdateVisualLines();
@@ -86,14 +108,6 @@ void DetectLane::UpdateVisualMemory() {
   cv::medianBlur(visualImpression, visualImpression, m_blurKernelSize);
   
   m_visualMemory.push_back(std::make_pair(now, visualImpression));
-  // Delete old mem, comparison in microseconds in the timestamps
-  /*int64_t const MEMCAP_IN_MICROSECONDS = static_cast<int64_t>(m_memThreshold*1000000.0);
-  bool memoryIsTooOld = deltaInMicroseconds(now, m_visualMemory.front().first) > MEMCAP_IN_MICROSECONDS;
-  while (!m_visualMemory.empty() && memoryIsTooOld) {
-    m_visualMemory.pop_front();
-  //  memoryIsTooOld = (now - m_visualMemory.front().first).toMicroseconds() > MEMCAP_IN_MICROSECONDS;
-	  
-  } */ 
 }
 
 void DetectLane::UpdateVisualLines()
@@ -340,7 +354,7 @@ void DetectLane::DrawWindows()
   // Printing out screen points
   for (uint8_t i = 0; i < m_laneLineIds.size(); i++) {
     for (uint8_t k = 0; k < 2; k++) {
-	  cv::Point point((int)(m_xScreenP[m_laneLineIds[i]][k], m_yScreenP[m_laneLineIds[i]][k]));
+	  cv::Point point((uint)m_xScreenP[m_laneLineIds[i]][k], (uint)m_yScreenP[m_laneLineIds[i]][k]);
 	  // int cv_point_int = cv::Point(m_xScreenP[m_laneLineIds[i]][k], m_yScreenP[m_laneLineIds[i]][k]);
       cv::circle(m_currentImg, point, 10, cv::Scalar(0,255,0), 3, 8);
     }
@@ -348,7 +362,7 @@ void DetectLane::DrawWindows()
   // Printing out current lane points
   for (uint8_t i = 0; i < m_currentLaneLineIds.size(); i++) {
     for (uint8_t k = 0; k < 2; k++) {
-	  cv::Point point((int)(m_xScreenP[m_currentLaneLineIds[i]][k], m_yScreenP[m_currentLaneLineIds[i]][k]));
+	  cv::Point point((uint)m_xScreenP[m_currentLaneLineIds[i]][k], (uint)m_yScreenP[m_currentLaneLineIds[i]][k]);
       cv::circle(m_currentImg, point, 10, cv::Scalar(0,0,255), 3, 8);
     }
   }

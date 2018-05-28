@@ -37,21 +37,56 @@
 int32_t main(int32_t argc, char **argv) {
     int32_t retCode{0};
     auto commandlineArguments = cluon::getCommandlineArguments(argc, argv);
-    if ( (0 == commandlineArguments.count("name")) || (0 == commandlineArguments.count("cid")) || (0 == commandlineArguments.count("width")) || (0 == commandlineArguments.count("height")) || (0 == commandlineArguments.count("bpp")) ) {
+    if ( (0 == commandlineArguments.count("name")) || (0 == commandlineArguments.count("cid")) || (0 == commandlineArguments.count("width")) || (0 == commandlineArguments.count("height")) || (0 == commandlineArguments.count("bpp")) || (0 == commandlineArguments.count("blurkernelsize")) || (0 == commandlineArguments.count("adapthreshkernelsize"))
+        || (0 == commandlineArguments.count("adapthreshconst")) || (0 == commandlineArguments.count("cannythreshold")) || (0 == commandlineArguments.count("houghthreshold")) || (0 == commandlineArguments.count("linediff")) || (0 == commandlineArguments.count("onelinediff")) || (0 == commandlineArguments.count("horisontallimit"))
+        || (0 == commandlineArguments.count("memthreshold")) || (0 == commandlineArguments.count("lowerlanelimit")) || (0 == commandlineArguments.count("upperlanelimit")) || (0 == commandlineArguments.count("roix")) || (0 == commandlineArguments.count("roiy")) || (0 == commandlineArguments.count("roiwidth")) || (0 == commandlineArguments.count("roiheight")) ) {
         std::cerr << argv[0] << " accesses video data using shared memory provided using the command line parameter --name=." << std::endl;
         std::cerr << "Usage:   " << argv[0] << " --cid=<OpenDaVINCI session> --width=<width> --height=<height> --bpp=<bits per pixel> --name=<name for the associated shared memory> [--id=<Identifier in case of multiple video streams>] [--verbose]" << std::endl;
         std::cerr << "         --width:   width of a frame" << std::endl;
         std::cerr << "         --height:  height of a frame" << std::endl;
         std::cerr << "         --bpp:     bits per pixel of a frame (either 8 or 24)" << std::endl;
         std::cerr << "         --name:    name of the shared memory to use" << std::endl;
+        std::cerr << "         --blurkernelsize:    Size of the blurkernel -> openCV" << std::endl;
+        std::cerr << "         --adapthreshkernelsize: Size of the adaptive threshold kernel size -> openCV" << std::endl;
+        std::cerr << "         --adapthreshconst:   Adaptive threshold constants -> openCV" << std::endl;
+        std::cerr << "         --cannythreshold:    Canny threshold -> openCV" << std::endl;
+        std::cerr << "         --houghthreshold:    Hough threshold -> openCV" << std::endl;
+        std::cerr << "         --linediff: How much a line can differ" << std::endl;
+        std::cerr << "         --onelinediff: How much a line can differ between the two points" << std::endl;
+        std::cerr << "         --horisontallimit: meters on each side we should consider" << std::endl;
+        std::cerr << "         --memthreshold" << std::endl;
+        std::cerr << "         --lowerlanelimit: blue frame to detect lanes lower level" << std::endl;
+        std::cerr << "         --upperlanelimit: blue frame to detect lanes upper level"<< std::endl;
+        std::cerr << "         --roix: [0]xx Pixels away from the upper left corner in X"<< std::endl;
+        std::cerr << "         --roiy: [1]xx Pixels away from the upper part of picture in Y"<< std::endl;
+        std::cerr << "         --roiwidth: [2]xx Pixel width of the captured box in X"<< std::endl; 
+        std::cerr << "         --roiheight: [3]xx Pixel height of the captured box in Y"<< std::endl; 
         std::cerr << "         --verbose: when set, the image contained in the shared memory is displayed" << std::endl;
         std::cerr << "Example: " << argv[0] << " --cid=111 --name=cam0 --width=640 --height=480 --bpp=24" << std::endl;
+        std::cerr << std::stoi(commandlineArguments["roi"]) << std::endl;
         retCode = 1;
     }
     else {
         const uint32_t WIDTH{static_cast<uint32_t>(std::stoi(commandlineArguments["width"]))};
         const uint32_t HEIGHT{static_cast<uint32_t>(std::stoi(commandlineArguments["height"]))};
         const uint32_t BPP{static_cast<uint32_t>(std::stoi(commandlineArguments["bpp"]))};
+        
+        const uint16_t blurKernelSize{static_cast<uint16_t>(std::stoi(commandlineArguments["blurkernelsize"]))};
+        const uint8_t adapThreshKernelSize{static_cast<uint8_t>(std::stoi(commandlineArguments["adapthreshkernelsize"]))};
+        const uint8_t adapThreshConst{static_cast<uint8_t>(std::stoi(commandlineArguments["adapthreshconst"]))};
+        const uint16_t cannyThreshold{static_cast<uint16_t>(std::stoi(commandlineArguments["cannythreshold"]))};
+        const uint16_t houghThreshold{static_cast<uint16_t>(std::stoi(commandlineArguments["houghthreshold"]))};
+        const float lineDiff{static_cast<float>(std::stoi(commandlineArguments["linediff"]))};
+        const float OneLineDiff{static_cast<float>(std::stoi(commandlineArguments["onelinediff"]))};
+        const float HorisontalLimit{static_cast<float>(std::stoi(commandlineArguments["horisontallimit"]))};
+        const double memThreshold{static_cast<double>(std::stoi(commandlineArguments["memthreshold"]))};
+        const double lowerLaneLimit{static_cast<double>(std::stoi(commandlineArguments["lowerlanelimit"]))};
+        const double upperLaneLimit{static_cast<double>(std::stoi(commandlineArguments["upperlanelimit"]))};
+        const uint16_t roiX{static_cast<uint16_t>(std::stoi(commandlineArguments["roix"]))};
+        const uint16_t roiY{static_cast<uint16_t>(std::stoi(commandlineArguments["roiy"]))};
+        const uint16_t roiWidth{static_cast<uint16_t>(std::stoi(commandlineArguments["roiwidth"]))};
+        const uint16_t roiHeight{static_cast<uint16_t>(std::stoi(commandlineArguments["roiheight"]))};
+        
 
         if ( (BPP != 24) && (BPP != 8) ) {
             std::cerr << argv[0] << ": bits per pixel must be either 24 or 8; found " << BPP << "." << std::endl;
@@ -102,7 +137,7 @@ int32_t main(int32_t argc, char **argv) {
                     cv::waitKey(1);
                     
                     cvtColor(cv_image,cv_image_colorflip,cv::COLOR_RGB2BGR);
-                    detectlane.Datatrigger(cv_image_colorflip);
+                    detectlane.Datatrigger(cv_image_colorflip, WIDTH, HEIGHT, blurKernelSize, adapThreshKernelSize, adapThreshConst, cannyThreshold, houghThreshold, lineDiff, OneLineDiff, HorisontalLimit, memThreshold, lowerLaneLimit, upperLaneLimit, roiX, roiY, roiWidth, roiHeight);
                 }
                 cvReleaseImageHeader(&image);
             }

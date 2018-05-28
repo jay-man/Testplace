@@ -50,7 +50,7 @@ class DetectLane {
   DetectLane() noexcept;
   virtual ~DetectLane();
  public:
-  void Datatrigger(cv::Mat);	
+  void Datatrigger(cv::Mat, uint32_t, uint32_t, uint16_t, uint8_t, uint8_t, uint16_t, uint16_t, float, float, float, double, double, double, uint16_t, uint16_t, uint16_t, uint16_t);	
   void setUp();
   void UpdateVisualMemory();
   void UpdateVisualLines();

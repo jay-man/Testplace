@@ -44,4 +44,19 @@ services:
                --width=1280 \
                --height=720 \
                --bpp=24 \
+               --blurkernelsize=3 \
+               --adapthreshkernelsize=5 \
+               --adapthreshconst=2 \
+               --cannythreshold=20 \
+               --houghthreshold=100 \
+               --linediff=2.1f \
+               --onelinediff=5.0f \
+               --horisontallimit=12.0f \
+               --memthreshold=0.5 \
+               --lowerlanelimit=200 \
+               --upperlanelimit=500 \
+               --roix=200 \
+               --roiy=170 \
+               --roiwidth=800 \
+               --roiheight=400 \
                --verbose"
