@@ -20,9 +20,6 @@
 
 #include "detectlane.hpp"
 
-//#include <boost/property_tree/ptree.hpp>
-//#include <boost/property_tree/ini_parser.hpp>
-
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 
@@ -86,6 +83,7 @@ int32_t main(int32_t argc, char **argv) {
         const uint16_t roiY{static_cast<uint16_t>(std::stoi(commandlineArguments["roiy"]))};
         const uint16_t roiWidth{static_cast<uint16_t>(std::stoi(commandlineArguments["roiwidth"]))};
         const uint16_t roiHeight{static_cast<uint16_t>(std::stoi(commandlineArguments["roiheight"]))};
+        const bool debug{static_cast<bool>(std::stoi(commandlineArguments["debug"]))};
         
 
         if ( (BPP != 24) && (BPP != 8) ) {
@@ -99,10 +97,6 @@ int32_t main(int32_t argc, char **argv) {
 
             (void)ID;
             (void)SIZE;
-            
-            //confi-file
-            //boost::property_tree::ptree pt;
-            //boost::property_tree::ini_parser::read_ini("config.ini", pt);
             
             DetectLane detectlane;
 
@@ -137,7 +131,9 @@ int32_t main(int32_t argc, char **argv) {
                     cv::waitKey(1);
                     
                     cvtColor(cv_image,cv_image_colorflip,cv::COLOR_RGB2BGR);
-                    detectlane.Datatrigger(cv_image_colorflip, WIDTH, HEIGHT, blurKernelSize, adapThreshKernelSize, adapThreshConst, cannyThreshold, houghThreshold, lineDiff, OneLineDiff, HorisontalLimit, memThreshold, lowerLaneLimit, upperLaneLimit, roiX, roiY, roiWidth, roiHeight);
+                    detectlane.Datatrigger(cv_image_colorflip, WIDTH, HEIGHT, blurKernelSize, adapThreshKernelSize, adapThreshConst,
+                                           cannyThreshold, houghThreshold, lineDiff, OneLineDiff, HorisontalLimit, memThreshold,
+                                           lowerLaneLimit, upperLaneLimit, roiX, roiY, roiWidth, roiHeight, debug);
                 }
                 cvReleaseImageHeader(&image);
             }

@@ -22,9 +22,8 @@ services:
     
     consumer:
         image: consumer
-        depends_on:
-          - producer
-        restart: always
+#        depends_on:
+#          - producer
         network_mode: "host"
         working_dir: /opt/
         volumes:
@@ -40,23 +39,24 @@ services:
             hard: 4000000
         command: "
                --cid=111 \
-               --name=camera0 \
+               --name=cam0 \
                --width=1280 \
                --height=720 \
                --bpp=24 \
-               --blurkernelsize=3 \
+               --blurkernelsize=5 \
                --adapthreshkernelsize=5 \
-               --adapthreshconst=2 \
-               --cannythreshold=20 \
+               --adapthreshconst=15 \
+               --cannythreshold=110 \
                --houghthreshold=100 \
-               --linediff=2.1f \
+               --linediff=1.1f \
                --onelinediff=5.0f \
                --horisontallimit=12.0f \
                --memthreshold=0.5 \
-               --lowerlanelimit=200 \
-               --upperlanelimit=500 \
-               --roix=200 \
-               --roiy=170 \
-               --roiwidth=800 \
-               --roiheight=400 \
+               --lowerlanelimit=490 \
+               --upperlanelimit=650 \
+               --roix=100 \
+               --roiy=470 \
+               --roiwidth=1000 \
+               --roiheight=200 \
+               --debug=1 \
                --verbose"

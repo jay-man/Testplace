@@ -50,7 +50,7 @@ class DetectLane {
   DetectLane() noexcept;
   virtual ~DetectLane();
  public:
-  void Datatrigger(cv::Mat, uint32_t, uint32_t, uint16_t, uint8_t, uint8_t, uint16_t, uint16_t, float, float, float, double, double, double, uint16_t, uint16_t, uint16_t, uint16_t);	
+  void Datatrigger(cv::Mat, uint32_t, uint32_t, uint16_t, uint8_t, uint8_t, uint16_t, uint16_t, float, float, float, double, double, double, uint16_t, uint16_t, uint16_t, uint16_t, bool);	
   void setUp();
   void UpdateVisualMemory();
   void UpdateVisualLines();
@@ -63,7 +63,6 @@ class DetectLane {
   Eigen::MatrixXd ReadMatrix(std::string const, uint8_t const, uint8_t const) const;
   void DrawWindows();
 
-  //bool m_initialized;
   cv::Mat cv_image;
   cv::Mat m_currentImg;
   uint16_t m_blurKernelSize; 
@@ -93,7 +92,6 @@ class DetectLane {
   std::mutex m_mtx;
   bool m_debug;
   Eigen::Matrix3d m_transformationMatrix;
-
 };
 
 

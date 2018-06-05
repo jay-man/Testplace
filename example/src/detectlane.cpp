@@ -26,12 +26,12 @@ DetectLane::DetectLane() noexcept :
   , m_upperLaneLimit() //current 200
   , m_lowerLaneLimit() //current 500
   , m_screenSize{}
-// m_camera = name
   , m_roi{}
   , m_mtx()
-  , m_debug(1)
+  , m_debug(1) //1
   , m_transformationMatrix()
 {
+
   //m_roi={30,150,1000,50}; 
   //m_roi[0]=200; //#205 Pixels away from the upper left corner in X
   //m_roi[1]=170; //#200 Pixels away from the upper part of picture in Y
@@ -53,7 +53,7 @@ DetectLane::~DetectLane()
 void DetectLane::Datatrigger(cv::Mat image, uint32_t width, uint32_t height, uint16_t blurKernelSize, uint8_t adapThreshKernelSize,
 							 uint8_t adapThreshConst, uint16_t cannyThreshold, uint16_t houghThreshold, float lineDiff, float OneLineDiff,
 							 float HorisontalLimit, double memThreshold, double upperLaneLimit, double lowerLaneLimit, uint16_t roiX,
-							 uint16_t roiY, uint16_t roiWidth, uint16_t roiHeight) {
+							 uint16_t roiY, uint16_t roiWidth, uint16_t roiHeight, bool debug) {
 
   m_screenSize[0]=width;
   m_screenSize[1]=height;
@@ -72,6 +72,7 @@ void DetectLane::Datatrigger(cv::Mat image, uint32_t width, uint32_t height, uin
   m_roi[1]=roiY;
   m_roi[2]=roiWidth;
   m_roi[3]=roiHeight;
+  m_debug=debug;
 	
   m_currentImg = image.clone();
   UpdateVisualMemory();
@@ -91,6 +92,34 @@ void DetectLane::Datatrigger(cv::Mat image, uint32_t width, uint32_t height, uin
   if (m_debug) {
     DrawWindows();
   }
+	//TODO: Update middel lane calculation: opendlv::model::Cartesian3> -> EIGEN.Vector
+/*	    if (edges.size() >= 4) {
+      double x1 = edges[0].getX();
+      double y1 = edges[0].getY();
+      double x2 = edges[2].getX();
+      double y2 = edges[2].getY();
+
+      double xAim = (x1 + x2) / 2.0;
+      double yAim = (y1 + y2) / 2.0;
+
+      double aimAngle = atan2(yAim, xAim);
+
+      std::cout << "Aim point: " << xAim << ":" << yAim << std::endl;
+      std::cout << "Aim angle: " << aimAngle << std::endl;
+
+      odcore::data::TimeStamp now;
+      opendlv::model::Direction direction(0.0f, 0.0f);
+      opendlv::model::Direction desiredDirection(static_cast<float>(aimAngle), 0.0f);
+      opendlv::perception::StimulusDirectionOfMovement stimulus(now, desiredDirection, direction);
+     
+      odcore::data::Container c(stimulus);
+      getConference().send(c);
+    }
+	*/
+  for (auto it = m_currentLaneLineIds.begin(); it != m_currentLaneLineIds.end(); it++) {
+	std::cout << (m_xWorldP[*it][0], m_yWorldP[*it][0]) << std::endl;
+	std::cout << (m_xWorldP[*it][1], m_yWorldP[*it][1]) << std::endl;
+  }
 }
   
 void DetectLane::UpdateVisualMemory() {
@@ -108,6 +137,7 @@ void DetectLane::UpdateVisualMemory() {
   cv::medianBlur(visualImpression, visualImpression, m_blurKernelSize);
   
   m_visualMemory.push_back(std::make_pair(now, visualImpression));
+
 }
 
 void DetectLane::UpdateVisualLines()
